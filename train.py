@@ -80,7 +80,7 @@ train_valid_inference = TrainerHelpers(input_dim, hidden_dim, seq_length, output
                                        device, optimizer, criterion,loss_calculator, scheduler,
                                        data_sampler,NUM_EPOCHS, patience_n=n_patience, task=False)
 
-main_path = f"/home/cissoko-m-1/Music/{task_dataset.split('_')[0]}_WITH_THRESHOLD"
+main_path = f"/home/cissoko-m-1/Music/{task_dataset.split('_')[0]}_MCAR"
 task_path=f"{os.path.join(main_path, task_dataset.split('_')[0])}"
 if not os.path.exists(task_path):
     os.makedirs(task_path)
