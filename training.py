@@ -57,15 +57,15 @@ total_steps_per_fold = int(steps_per_epoch * NUM_EPOCHS)
 num_warmup_steps = int(0.1 * total_steps_per_fold)
 
 arr = np.arange(input_dim)
-percentage = 0.2
-num_samples = int(len(arr) * percentage)
+percen = 0.2
+num_samples = int(len(arr) * percen)
 sampled = np.random.choice(arr, size=num_samples, replace=False)
 # INFO[LOADING MODEL]
 print("INFO[LOADING MODEL]")
 
 dyfa_aware = DyFA_Aware(input_dim, hidden_dim, seq_length, output_dim).to(device)
 # Create an instance of the class
-data_sampler =DataSampler(percentage=0.2, mode='MCAR')
+data_sampler =DataSampler(percentage=0.2, mode='MAR', feature_idx=sampled.tolist())
 
 loss_calculator = Afail()
 optimizer = torch.optim.Adam(dyfa_aware.parameters(), **optimizer_config)
@@ -80,7 +80,7 @@ train_valid_inference = TrainerHelpers(input_dim, hidden_dim, seq_length, output
                                        device, optimizer, criterion,loss_calculator, scheduler,
                                        data_sampler,NUM_EPOCHS, patience_n=n_patience, task=False)
 
-main_path = f"/home/cissoko-m-1/Music/{task_dataset.split('_')[0]}_WITH_THRESHOLD_V01"
+main_path = f"/home/cissoko-m-1/Music/{task_dataset.split('_')[0]}_MAR"
 task_path=f"{os.path.join(main_path, task_dataset.split('_')[0])}"
 if not os.path.exists(task_path):
     os.makedirs(task_path)
