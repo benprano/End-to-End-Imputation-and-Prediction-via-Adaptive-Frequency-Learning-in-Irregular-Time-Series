@@ -57,8 +57,8 @@ total_steps_per_fold = int(steps_per_epoch * NUM_EPOCHS)
 num_warmup_steps = int(0.1 * total_steps_per_fold)
 
 arr = np.arange(input_dim)
-percentage = 0.2
-num_samples = int(len(arr) * percentage)
+percen = 0.2
+num_samples = int(len(arr) * percen)
 sampled = np.random.choice(arr, size=num_samples, replace=False)
 # INFO[LOADING MODEL]
 print("INFO[LOADING MODEL]")
