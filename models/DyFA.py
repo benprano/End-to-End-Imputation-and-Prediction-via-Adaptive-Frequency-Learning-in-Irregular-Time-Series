@@ -169,9 +169,8 @@ class DyFA(torch.jit.ScriptModule):
         frequencies = (self.seq_len - freq_dict) * torch.exp(-self.factor * self.features_decay)
         frequencies = torch.div(frequencies, frequencies.max()).unsqueeze(-1)
         
-        # Compute imputed values %factor_imp >= threshold,
-        omega = 0.8  # any value from 0.8 to 0.99 give the same results as more 80% features are selected based on this threshold  settings
-        # or any value from grid search
+        # Compute imputed values %factor_imp >= threshold, or any value from grid search
+        omega = 0.8  # any value from 0.8 to 0.99 give the same results as more 80% features are selected based on this threshold settings
         threshold = omega * factor_imp.max()
 
         # Compute imputed values
