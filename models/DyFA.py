@@ -5,9 +5,9 @@ import torch.nn as nn
 from torch import Tensor
 
 
-class DyFA(torch.jit.ScriptModule):
+class DyFAIP_Cell(torch.jit.ScriptModule):
     def __init__(self, input_size, hidden_size, seq_len, output_dim, batch_first=True, bidirectional=True):
-        super(DyFA, self).__init__()
+        super(DyFAIP_Cell, self).__init__()
         self.input_size = input_size
         self.output_dim = output_dim
         self.initializer_range = 0.02
@@ -35,36 +35,22 @@ class DyFA(torch.jit.ScriptModule):
         self.U_f = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
         self.U_o = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
         self.U_c = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
-        self.U_last = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
-        self.U_time = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
+        self.U_last = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
+        self.U_time = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
         self.Dw = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1, self.hidden_size)))
 
-        self.W_j = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
-        self.W_i = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
-        self.W_f = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
-        self.W_o = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
-        self.W_c = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
-        self.W_d = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
-        self.W_decomp = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_j = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_i = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_f = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_o = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_c = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_d = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_decomp = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, self.hidden_size)))
+        self.W_cell_i = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
+        self.W_cell_f = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
+        self.W_cell_o = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
 
-        self.W_cell_i = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
-        self.W_cell_f = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
-        self.W_cell_o = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
-
-        self.b_decomp = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
+        self.b_decomp = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
         self.b_j = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
         self.b_i = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
         self.b_f = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
@@ -74,24 +60,17 @@ class DyFA(torch.jit.ScriptModule):
         self.b_time = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
         self.b_d = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
         # Interpolation
-        self.W_ht_mask = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
-        self.W_ct_mask = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
-        self.b_j_mask = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
+        self.W_ht_mask = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
+        self.W_ct_mask = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
+        self.b_j_mask = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
 
-        self.W_ht_last = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
-        self.W_ct_last = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
-        self.b_j_last = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
+        self.W_ht_last = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
+        self.W_ct_last = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size, 1)))
+        self.b_j_last = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size)))
 
         # Gate Linear Unit for last records
         self.activation_layer = nn.ELU()
-        self.F_alpha = nn.Parameter(
-            torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size * 2, 1)))
+        self.F_alpha = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, self.hidden_size * 2, 1)))
         self.F_alpha_n_b = nn.Parameter(torch.normal(0.0, self.initializer_range, size=(self.input_size, 1)))
         self.F_beta = nn.Linear(self.seq_len, 4 * self.hidden_size)
         self.layer_norm1 = nn.LayerNorm([self.input_size, self.seq_len])
@@ -99,7 +78,7 @@ class DyFA(torch.jit.ScriptModule):
         self.Phi = nn.Linear(4 * self.hidden_size, self.output_dim)
 
     @torch.jit.script_method
-    def dyfa_unit(self, prev_hidden_memory, cell_hidden_memory, inputs, times, last_data, freq_list):
+    def dyfaip_unit(self, prev_hidden_memory, cell_hidden_memory, inputs, times, last_data, freq_list):
         h_tilda_t, c_tilda_t = prev_hidden_memory, cell_hidden_memory,
         x = inputs
         t = times
@@ -220,9 +199,9 @@ class DyFA(torch.jit.ScriptModule):
         weights_decay = torch.jit.annotate(List[Tensor], [])
         weights_fgate = torch.jit.annotate(List[Tensor], [])
         for i in range(seq_len):
-            prev_hidden, prev_cell, pre_we_decay, fgate_f, imputed_x = self.dyfa_unit(prev_hidden, prev_cell, inputs[i],
-                                                                                      times[i], last_values[i],
-                                                                                      freqs[i])
+            prev_hidden, prev_cell, pre_we_decay, fgate_f, imputed_x = self.dyfaip_unit(prev_hidden, prev_cell, inputs[i],
+                                                                                        times[i], last_values[i],
+                                                                                        freqs[i])
             hidden_his += [prev_hidden]
             imputed_inputs += [imputed_x]
             weights_decay += [pre_we_decay]
@@ -245,10 +224,9 @@ class DyFA(torch.jit.ScriptModule):
                     time = times[i]
                 else:
                     time = second_times[i - 1]
-                second_hidden, second_cell, b_we_decay, fgate_b, imputed_x_b = self.dyfa_unit(second_hidden,
-                                                                                              second_cell,
-                                                                                              second_inputs[i], time,
-                                                                                              last_values[i], freqs[i])
+                second_hidden, second_cell, b_we_decay, fgate_b, imputed_x_b = self.dyfaip_unit(second_hidden,second_cell,
+                                                                                                second_inputs[i], time,
+                                                                                                last_values[i], freqs[i])
                 second_hidden_his += [second_hidden]
                 second_weights_decay += [b_we_decay]
                 second_weights_fgate += [fgate_b]
@@ -271,27 +249,26 @@ class DyFA(torch.jit.ScriptModule):
             weights_fgate = weights_fgate.permute(1, 0, 2, 3)
 
         alphas = torch.tanh(torch.einsum("btij,ijk->btik", hidden_his, self.F_alpha) + self.F_alpha_n_b)
-        alphas = alphas.reshape(alphas.size(0), alphas.size(2),
-                                alphas.size(1) * alphas.size(-1))
+        alphas = alphas.reshape(alphas.size(0), alphas.size(2), alphas.size(1) * alphas.size(-1))
         mu = self.Phi(self.layer_norm(self.F_beta(self.layer_norm1(alphas))))
         out = torch.max(mu, dim=1).values
         return out, weights_decay, weights_fgate, imputed_inputs
 
-class DyFA_Aware(nn.Module):
+class DyFAIP_Aware(nn.Module):
     def __init__(self, input_dim, hidden_dim,seq_len, output_dim, dropout=0.2):
-        super(DyFA_Aware, self).__init__()
+        super(DyFAIP_Aware, self).__init__()
         # hidden dimensions
         self.input_size = input_dim
         self.hidden_size = hidden_dim
         self.seq_len = seq_len
         self.output_dim= output_dim
         # Temporal embedding DyFAIP
-        self.dyfa_lstm = DyFA(self.input_size, self.hidden_size,
+        self.dyfaip = DyFAIP_Cell(self.input_size, self.hidden_size,
                                           self.seq_len, self.output_dim)
     def forward(self,historic_features,timestamp, last_features, features_freqs , is_test=False):
         # Temporal features embedding
-        outputs, decay_weights, fgate, imputed_inputs = self.dyfa_lstm(historic_features,timestamp,
-                                                                           last_features, features_freqs)
+        outputs, decay_weights, fgate, imputed_inputs = self.dyfaip(historic_features,timestamp,
+                                                                    last_features, features_freqs)
         if is_test:
             return decay_weights, fgate, imputed_inputs.mean(axis=2), outputs
         else:
