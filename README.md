@@ -4,6 +4,8 @@ DyFAIP (Dynamic Frequency-Aware Network for Imputation and Prediction), a novel 
 
 1*) How to run the script on Beijing Air Quality Multi-Site dataset:
 
+  * Beijing Air Quality Data preprocessing.ipynb
+
     -Unzipp the dataset from the data folder and pass the path to the Beijing Air Quality Data preprocessing.ipynb
     -output : File to save subject's data
 
