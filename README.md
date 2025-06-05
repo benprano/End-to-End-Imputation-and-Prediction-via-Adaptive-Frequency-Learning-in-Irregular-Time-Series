@@ -56,19 +56,20 @@ Make sure the following key libraries are installed:
     tqdm
 
 
-1*) How to run the script on Beijing Air Quality Multi-Site dataset:
+🧠 DyFAIP Model Overview
 
-  * Beijing Air Quality Data preprocessing.ipynb
+DyFAIP is built with the following components:
 
-    -Unzipp the dataset from the data folder
-    
-    -Output : Generate the input data 
+    Frequency-Aware Temporal : Learns both short- and long-range frequency patterns in irregular time series.
 
+    Dynamic Memory Module: Aggregates context over time using adaptive memory gates.
 
-2*) Run the model on the dataset:
+    Joint Optimization: Simultaneously optimizes imputation loss and prediction loss.
 
-   * Using training.py
-     
-      -input_path : output path for the generated data from data pre-processing script!
-     
-      -Output : give the results of both tasks (Imputation results and downstream task results)
+Supported tasks:
+
+    Time series imputation
+
+    Time series forecasting
+
+    Time series classification (optional)
