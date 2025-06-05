@@ -151,7 +151,7 @@ class DyFAIP_Cell(torch.jit.ScriptModule):
         # Compute imputed values %factor_imp >= threshold, or any value from grid search
         # any value from 0.90 to 0.99 give the similar results as more than 90% features are selected based on this threshold settings.
         # (0.99 ---> select almost all the features to be used)
-        omega = 0.97  
+        omega = 0.99  
         threshold = omega * factor_imp.max()
 
         # Compute imputed values
