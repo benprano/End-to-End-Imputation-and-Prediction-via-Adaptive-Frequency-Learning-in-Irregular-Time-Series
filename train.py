@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from models.DyFA import DyFAIP_Aware
+from models.DyFAIP_Network import DyFAIP_Aware
 from utils.afail_loss import Afail
 from utils.missing_mecanisms import DataSampler
 from utils.train_evaluate_helpers import TrainerHelpers
