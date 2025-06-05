@@ -2,9 +2,9 @@
 DyFAIP (Dynamic Frequency-Aware Network for Imputation and Prediction), a novel deep dynamic memory neural network framework that jointly optimizes missing data imputation and downstream prediction in an end-to-end manner.
 
 
-1*) How to run the script to extract helpers from the main tables:
+1*) How to run the script on Beijing Air Quality Multi-Site dataset:
 
-    -table : Different tables
+    -Unzipp the dataset from the data folder 
     -output_path : File to save subject's data
 
 python subjects_features_extractor.py -table "OUTPUTEVENTS,LABEVENTS,CHARTEVENTS,INPUTEVENTS_CV,INPUTEVENTS_MV" -output_path "NEW_FILE"
