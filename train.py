@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from models.DyFA import DyFA_Aware
+from models.DyFA import DyFAIP_Aware
 from utils.afail_loss import Afail
 from utils.missing_mecanisms import DataSampler
 from utils.train_evaluate_helpers import TrainerHelpers
@@ -30,7 +30,7 @@ def seed_all(seed: int = 1992):
 seed_all()
 
 
-dn="/home/cissoko-m-1/Downloads/BEIJINGAIRQUALITY_24_HRS_DATA/"
+dn="-------- path to the dataset"
 task_dataset ="BEIJINGAIRQUALITY_24_HRS_DATA_128"
 
 all_dataset_loader = np.load(os.path.join(os.path.join(dn,task_dataset), "train_test_data.npz"),allow_pickle=True)
@@ -63,24 +63,24 @@ sampled = np.random.choice(arr, size=num_samples, replace=False)
 # INFO[LOADING MODEL]
 print("INFO[LOADING MODEL]")
 
-dyfa_aware = DyFA_Aware(input_dim, hidden_dim, seq_length, output_dim).to(device)
+dyfaip_aware = DyFAIP_Aware(input_dim, hidden_dim, seq_length, output_dim).to(device)
 # Create an instance of the class
 data_sampler =DataSampler(percentage=0.2, mode='MCAR')
 
 loss_calculator = Afail()
-optimizer = torch.optim.Adam(dyfa_aware.parameters(), **optimizer_config)
+optimizer = torch.optim.Adam(dyfaip_aware.parameters(), **optimizer_config)
 scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=1e-3, epochs=NUM_EPOCHS,
                                           steps_per_epoch=100)
 criterion = nn.MSELoss().to(device)
-best_model_wts = deepcopy(dyfa_aware.state_dict())
+best_model_wts = deepcopy(dyfaip_aware.state_dict())
 
-print(dyfa_aware)
+print(dyfaip_aware)
 
 train_valid_inference = TrainerHelpers(input_dim, hidden_dim, seq_length, output_dim,
                                        device, optimizer, criterion,loss_calculator, scheduler,
                                        data_sampler,NUM_EPOCHS, patience_n=n_patience, task=False)
 
-main_path = f"/home/cissoko-m-1/Music/{task_dataset.split('_')[0]}_MCAR"
+main_path = f"path to save the results for both tasks"
 task_path=f"{os.path.join(main_path, task_dataset.split('_')[0])}"
 if not os.path.exists(task_path):
     os.makedirs(task_path)
@@ -91,7 +91,7 @@ for idx, (train_loader, test_data) in enumerate(zip(train_val_loader ,test_loade
     # Reset the model weights
     dyfa_aware.load_state_dict(best_model_wts)
     train_data, valid_data= train_loader
-    scores_= train_valid_inference.train_validate_evaluate(DyFA_Aware, dyfa_aware, idx+1,train_data,
+    scores_= train_valid_inference.train_validate_evaluate(DyFAIP_Aware, dyfaip_aware, idx+1,train_data,
                                                            valid_data, test_data, dataset_settings,
                                                            task_path)
     scores_folds.append(scores_)
