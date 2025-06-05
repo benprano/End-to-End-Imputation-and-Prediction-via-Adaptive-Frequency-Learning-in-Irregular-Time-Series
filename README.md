@@ -73,3 +73,10 @@ Supported tasks:
     Time series forecasting
 
     Time series classification
+
+📊 Results
+
+Example performance on the Beijing Air Quality dataset:
+Setting	RMSE	Adj R2R2
+MAR (20%)	0.06	0.89
+MNAR (50%)	0.07	0.89
