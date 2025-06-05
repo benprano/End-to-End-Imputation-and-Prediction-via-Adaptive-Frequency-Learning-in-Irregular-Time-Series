@@ -5,7 +5,7 @@ DyFAIP (Dynamic Frequency-Aware Imputation and Prediction) is a novel deep dynam
 
 📘 How to Use DyFAIP on the Beijing Air Quality Multi-Site Dataset
 
-* 1. Preprocess the Dataset
+1. Preprocess the Dataset
 
 Open and run the Jupyter notebook:
 
@@ -16,6 +16,21 @@ Open and run the Jupyter notebook:
     Step 2: Run the notebook to generate the input files required for training.
 
     Output: Preprocessed data ready for training (stored in the specified output directory).
+
+
+2. Train and Evaluate the Model
+
+Use the script:
+training.py
+
+    Required argument:
+
+        --input_path: Path to the processed dataset generated from the preprocessing step.
+
+    Output:
+
+        Quantitative results for both imputation and prediction tasks, including RMSE, MAE, and performance metrics on the downstream task.
+
 
 
 
