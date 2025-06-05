@@ -116,12 +116,12 @@ class DyFA(torch.jit.ScriptModule):
                                     self.b_j_mask).permute(0, 2, 1)
         # Replace nan data with the impuated value generated from LSTM memory and frequencies weights
 
-        #_, x_last = self.impute_missing_data(l, freq, x_last_hidden)
+        _, x_last = self.impute_missing_data(l, freq, x_last_hidden)
         all_imputed_x, imputed_x = self.impute_missing_data(x, freq, imputat_imputs)
 
         # Ajust previous to incoporate the latest records for each feature
-        #last_tilda_t = self.activation_layer(torch.einsum("bij,jik->bjk", x_last, self.U_last) + self.b_last)
-        # h_tilda_t = h_tilda_t + last_tilda_t
+        last_tilda_t = self.activation_layer(torch.einsum("bij,jik->bjk", x_last, self.U_last) + self.b_last)
+        h_tilda_t = h_tilda_t + last_tilda_t
         # Capturing Temporal Dependencies wrt to the previous hidden state
         j_tilda_t = torch.tanh(torch.einsum("bij,ijk->bik", h_tilda_t, self.W_j) + \
                                torch.einsum("bij,jik->bjk", imputed_x, self.U_j) + self.b_j)
@@ -149,7 +149,7 @@ class DyFA(torch.jit.ScriptModule):
                           torch.einsum("bij,ijk->bik", h_tilda_t, self.W_o) +
                           ct * self.W_cell_o + self.b_o)
         # Current Hidden State
-        h_tilda_t = o * torch.tanh(ct)
+        h_tilda_t = o * torch.tanh(ct  + last_tilda_t)
 
         return h_tilda_t, ct, self.freq_decay(freq, j_tilda_t), f_new, all_imputed_x
 
@@ -172,7 +172,7 @@ class DyFA(torch.jit.ScriptModule):
         # Compute imputed values %factor_imp >= threshold, or any value from grid search
         # any value from 0.93 to 0.99 give the similar results as more than 90% features are selected based on this threshold settings.
         # (0.99 ---> select almost all the features to be used)
-        omega = 0.97  
+        omega = 0.93  
         threshold = omega * factor_imp.max()
 
         # Compute imputed values
