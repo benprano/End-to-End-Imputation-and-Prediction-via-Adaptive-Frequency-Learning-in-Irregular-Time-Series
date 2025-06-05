@@ -31,7 +31,29 @@ training.py
 
         Quantitative results for both imputation and prediction tasks, including RMSE, MAE, and performance metrics on the downstream task.
 
+🔧 1. Environment Setup
 
+We recommend using Conda:
+
+conda create -n dyfaip python=3.9 -y
+conda activate dyfaip
+pip install -r requirements.txt
+
+Make sure the following key libraries are installed:
+
+    torch
+
+    numpy
+
+    pandas
+
+    scikit-learn
+
+    matplotlib
+
+    seaborn
+
+    tqdm
 
 
 1*) How to run the script on Beijing Air Quality Multi-Site dataset:
