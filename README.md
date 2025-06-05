@@ -1,5 +1,22 @@
-# End-to-End Imputation and Prediction via Adaptive Frequency Learning In Irregular Time-series data
-DyFAIP (Dynamic Frequency-Aware Network for Imputation and Prediction), a novel deep dynamic memory neural network framework that jointly optimizes missing data imputation and downstream prediction in an end-to-end manner.
+# DyFAIP: End-to-End Imputation and Prediction via Adaptive Frequency Learning for Irregular Time Series
+
+DyFAIP (Dynamic Frequency-Aware Imputation and Prediction) is a novel deep dynamic memory neural network designed to jointly perform missing data imputation and downstream prediction in an end-to-end framework. It is especially well-suited for irregularly sampled time series, such as those found in environmental or healthcare datasets.
+
+
+📘 How to Use DyFAIP on the Beijing Air Quality Multi-Site Dataset
+
+* 1. Preprocess the Dataset
+
+Open and run the Jupyter notebook:
+
+* Beijing Air Quality Data preprocessing.ipynb
+
+    Step 1: Unzip the dataset inside the data/ directory.
+
+    Step 2: Run the notebook to generate the input files required for training.
+
+    Output: Preprocessed data ready for training (stored in the specified output directory).
+
 
 
 1*) How to run the script on Beijing Air Quality Multi-Site dataset:
@@ -8,25 +25,13 @@ DyFAIP (Dynamic Frequency-Aware Network for Imputation and Prediction), a novel 
 
     -Unzipp the dataset from the data folder
     
-    -output : Generate the input data 
+    -Output : Generate the input data 
 
-python subjects_features_extractor.py -table "OUTPUTEVENTS,LABEVENTS,CHARTEVENTS,INPUTEVENTS_CV,INPUTEVENTS_MV" -output_path "NEW_FILE"
 
-2*) Extract Subject's events data from files(table):
-   
-      -output_path : Filename where subject's data have been saved!
-      -subject_path : File to save subject's events data!
-      -inputs: Save inputevents data to file INPUTEVENTS!
-    
-python subject_data.py -output_path "NEW_FILE" -subject_path "subjects" -inputs "INPUTEVENTS" -charts "CHARTEVENTS" -labs "LABEVENTS" -outputs "outputevents"
+2*) Run the model on the dataset:
 
- 3*) Generate Subject's timeseries data
- 
-      -path_dir:  Main directory where all the data have been saved!
-    
-  python subject_timeseries.py -path_dir "NEW_FILE" -subject_path "icustays" -output_path "subjects_timeseries" -cohort_path "EPISODES_SUBJECTS" -hrs_data_min 0 -hrs_data_max 47
-
-Overall Script's time execution : 7:41:26
-
-Link to Subjects medical notes
-https://drive.google.com/drive/folders/1vO8JToP8HfnVSl6TpfiwAMdvdow7b9bz?usp=drive_link
+   * Using training.py
+     
+      -input_path : output path for the generated data from data pre-processing script!
+     
+      -Output : give the results of both tasks (Imputation results and downstream task results)
