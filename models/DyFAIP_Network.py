@@ -93,8 +93,8 @@ class DyFAIP_Cell(torch.jit.ScriptModule):
         imputat_imputs = torch.tanh(torch.einsum("bij,ijk->bik", self.freq_decay(freq, h_tilda_t), self.W_ht_mask) + \
                                     torch.einsum("bij,ijk->bik", self.freq_decay(freq, c_tilda_t), self.W_ct_mask) + \
                                     self.b_j_mask).permute(0, 2, 1)
-        # Replace nan data with the impuated value generated from LSTM memory and frequencies weights
-
+        
+        # Replace nan data with the impuated value generated from DyFAIP memory from the frequency weighting
         _, x_last = self.impute_missing_data(l, freq, x_last_hidden)
         all_imputed_x, imputed_x = self.impute_missing_data(x, freq, imputat_imputs)
 
