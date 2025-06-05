@@ -72,4 +72,4 @@ Supported tasks:
 
     Time series forecasting
 
-    Time series classification (optional)
+    Time series classification
