@@ -19,7 +19,7 @@ Open and run the Jupyter notebook:
     Output: Preprocessed data ready for training (stored in the specified output directory).
 
 
-### 🧹 2. Train and Evaluate the Model
+### 🚀  2. Train and Evaluate the Model
 
 
 Use the script:
